@@ -1,4 +1,4 @@
-package org.goodbot;
+package org.foresight;
 
 import org.json.JSONObject;
 
@@ -11,7 +11,6 @@ import java.net.http.HttpResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;

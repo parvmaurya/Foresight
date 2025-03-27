@@ -1,4 +1,4 @@
-package org.goodbot;
+package org.foresight;
 
 import com.github.bhlangonijr.chesslib.Board;
 import com.github.bhlangonijr.chesslib.Piece;
