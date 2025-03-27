@@ -1,1 +1,1 @@
-Main-Class: org.goodbot.App
+Main-Class: org.foresight.App
