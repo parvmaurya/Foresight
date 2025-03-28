@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 public class LichessUtil {
 
-    static final String lichessURL = "https://lichess.org";
-    static final String authToken = "";
+    static final String lichessURL = SecretsUtil.readLichessURL();
+    static final String authToken = SecretsUtil.readLichessSecret();
 
     static List<GameEvent> listOfGames = new ArrayList<>();
 

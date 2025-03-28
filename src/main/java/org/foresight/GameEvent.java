@@ -19,8 +19,8 @@ public class GameEvent {
     String gameId;
     String side;
 
-    final String lichessURL = "https://lichess.org";
-    final String authToken = "";
+    final String lichessURL = SecretsUtil.readLichessURL();
+    final String authToken = SecretsUtil.readLichessSecret();
 
     GameEvent(String gameId, String side) {
         this.gameId = gameId;
