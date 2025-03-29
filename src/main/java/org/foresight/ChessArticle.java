@@ -12,24 +12,36 @@ public class ChessArticle {
     static int count = 0;
 
     static int[] PIECE_VALUE = {10, 30, 32, 50, 90, 0, -10, -30, -32, -50, -90, 0, 0};
-
-    static long evalTime = 0;
+    static long CENTER_MASK = (1<<18) | (1<<19) | (1<<20) | (1<<21) | (1<<26) | (1<<27) | (1<<28) | (1<<29) | (1<<34) | (1<<35) | (1<<36) | (1<<37) | (1<<42) | (1<<43) | (1<<44) | (1<<45);
 
     static int getBoardValue(Board board) {
-        long tm = System.nanoTime();
+        long whiteBishops = board.getBitboard(Piece.WHITE_BISHOP);
+        long whiteKnights = board.getBitboard(Piece.WHITE_KNIGHT);
+        long whiteQueen = board.getBitboard(Piece.WHITE_QUEEN);
+        long whiteRooks = board.getBitboard(Piece.WHITE_ROOK);
+        long whitePawns = board.getBitboard(Piece.WHITE_PAWN);
+
+        long blackBishops = board.getBitboard(Piece.BLACK_BISHOP);
+        long blackKnights = board.getBitboard(Piece.BLACK_KNIGHT);
+        long blackQueen = board.getBitboard(Piece.BLACK_QUEEN);
+        long blackRooks = board.getBitboard(Piece.BLACK_ROOK);
+        long blackPawns = board.getBitboard(Piece.BLACK_PAWN);
+
         int score = 0;
-        Piece[] pieceList = board.boardToArray();
-        for(Piece p: pieceList) {
-            score = score + PIECE_VALUE[p.ordinal()];
-        }
-//        int whiteMobility = (int) board.legalMoves().stream()
-//                .filter(move -> board.getPiece(move.getFrom()).getPieceSide() == Side.WHITE).count();
-//
-//        int blackMobility = (int) board.legalMoves().stream()
-//                .filter(move -> board.getPiece(move.getFrom()).getPieceSide() == Side.BLACK).count();
-//
-//        int mobilityScore =  board.getSideToMove().equals(Side.WHITE) ? 4 * (whiteMobility - blackMobility) : 4 * (blackMobility - whiteMobility);
-        evalTime = evalTime + (System.nanoTime() - tm);
+        score = score + Long.bitCount(whiteBishops) * 320;
+        score = score + Long.bitCount(whiteKnights) * 300;
+        score = score + Long.bitCount(whiteQueen) * 900;
+        score = score + Long.bitCount(whiteRooks) * 500;
+        score = score + Long.bitCount(whitePawns) * 100;
+        score = score - Long.bitCount(blackBishops) * 320;
+        score = score - Long.bitCount(blackKnights) * 300;
+        score = score - Long.bitCount(blackQueen) * 900;
+        score = score - Long.bitCount(blackRooks) * 500;
+        score = score - Long.bitCount(blackPawns) * 100;
+
+//        score = score + (Long.bitCount(CENTER_MASK & board.getBitboard(Piece.WHITE_KNIGHT)) * 100)
+//                    - (Long.bitCount(CENTER_MASK & board.getBitboard(Piece.BLACK_KNIGHT)) * 100);
+
         return score;
     }
 
@@ -78,8 +90,6 @@ public class ChessArticle {
 //    static final AtomicInteger beta = new AtomicInteger(100000);
 //    static final AtomicReference<Move> bestMove = new AtomicReference<>();
 
-    static int intermediateCount = 0;
-
     public static Move findBestMoveRoot(Board board) {
         List<Move> bestMovesList = board.legalMoves();
         List<Integer> countList = new ArrayList<>();
@@ -100,7 +110,6 @@ public class ChessArticle {
             long startTime = System.currentTimeMillis();
 
             for (Move move: board.legalMoves()) {
-                intermediateCount = 0;
                 board.doMove(move);
                 count = count + 1;
 
@@ -137,7 +146,6 @@ public class ChessArticle {
                 Collections.reverse(bestMovesList);
             }
 
-//            System.out.println(bestMovesList);
             countList.add(count);
 
             if (Side.WHITE.equals(board.getSideToMove()) && moveMap.get(bestMovesList.get(0)) == 10000) {
@@ -148,9 +156,8 @@ public class ChessArticle {
             System.out.print(" Node count : " + count);
             System.out.print(" Score: " + moveMap.get(bestMovesList.get(0)));
             System.out.printf(" Hashing Hit ratio: %,.2f ", hashing.getHitsRatio() * 100);
+            System.out.print(" Positions added: " + hashing.getTotalAdds());
             System.out.println(" NPS: " + (1_000_000_000L * count / (System.nanoTime() - start)));
-//            System.out.println(" Time spend at leaf node evaluation: " + (evalTime*1.0/1e9));
-            evalTime = 0;
         }
 
         System.out.println("Branching factor: " + (1.0*countList.stream().mapToInt(i -> i).sum()/(countList.stream().mapToInt(i -> i).sum()-countList.get(countList.size()-1))));
@@ -212,7 +219,6 @@ public class ChessArticle {
 
     public static int findMoveAndScore(Board board, int depth, int alpha, int beta, boolean isMaximizer) {
         count = count + 1;
-        intermediateCount = intermediateCount + 1;
         if(board.isMated()) {
             if (Side.WHITE.equals(board.getSideToMove())) {
                 return -10000;

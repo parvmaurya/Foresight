@@ -10,13 +10,14 @@ class FastHashing {
     int mask;
     long totalHits = 0;
     long successHits = 0;
+    long totalAdds = 0;
 
     FastHashing() {
-        this.ttDepth = new int[1 << 23];
-        this.ttScore = new int[1 << 23];
-        this.ttKeys = new long[1 << 23];
-        this.ttBestMove = new Move[1 << 23];
-        this.mask = (1 << 23) -1;
+        this.ttDepth = new int[1 << 24];
+        this.ttScore = new int[1 << 24];
+        this.ttKeys = new long[1 << 24];
+        this.ttBestMove = new Move[1 << 24];
+        this.mask = (1 << 24) -1;
     }
 
     void addScore(long zorbist, int score, int depth, Move bestMove) {
@@ -26,7 +27,12 @@ class FastHashing {
             ttDepth[hashIndex] = depth;
             ttScore[hashIndex] = score;
             ttBestMove[hashIndex] = bestMove;
+            totalAdds++;
         }
+    }
+
+    long getTotalAdds() {
+        return this.totalAdds;
     }
 
     Integer getScore(long zorbist, int depth) {
@@ -54,6 +60,7 @@ class FastHashing {
     void clearHits() {
         this.successHits = 0;
         this.totalHits = 0;
+        this.totalAdds = 0;
     }
 
 }
