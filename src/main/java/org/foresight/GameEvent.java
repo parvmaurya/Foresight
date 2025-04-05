@@ -109,7 +109,7 @@ public class GameEvent {
                                        long startTime = System.currentTimeMillis();
                                        Move move = ChessArticle.findBestMoveRoot(board);
                                        makeMove(gameId, move.toString());
-                                       System.out.println("Time taken to find the move: " + move + " is: " + (System.currentTimeMillis() - startTime)/1000.0 + " seconds");
+                                       System.out.println("Time taken to find the move: " + move + " is: " + (System.currentTimeMillis() - startTime)/1000 + " seconds");
                                    }
                                } catch (Exception e){
                                    System.out.println("Exception: " + e);
@@ -124,6 +124,8 @@ public class GameEvent {
                }
             });
     }
+
+
 
     void closeGame() {
         System.out.println("Game is over now");
