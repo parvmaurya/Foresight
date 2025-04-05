@@ -26,7 +26,9 @@ class FastHashing {
             ttKeys[hashIndex] = zorbist;
             ttDepth[hashIndex] = depth;
             ttScore[hashIndex] = score;
-            ttBestMove[hashIndex] = bestMove;
+            if (bestMove != null) {
+                ttBestMove[hashIndex] = bestMove;
+            }
             totalAdds++;
         }
     }
@@ -47,7 +49,7 @@ class FastHashing {
 
     Move getBestMove(long zorbist) {
         int hashIndex = (int)(zorbist & mask);
-        if (ttKeys[hashIndex] == zorbist) {
+        if (ttKeys[hashIndex] == zorbist & ttBestMove[hashIndex] != null) {
             return ttBestMove[hashIndex];
         }
         return null;

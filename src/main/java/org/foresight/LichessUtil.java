@@ -59,10 +59,12 @@ public class LichessUtil {
                                             listOfGames.removeIf(game -> game.getGameId().equals(gameDetails.get("gameId")));
                                             break;
                                         case "challenge":
-                                            gameDetails = (JSONObject) json.get("challenge");
                                             System.out.println("Got a new challenge");
-                                            listOfGames.add(new GameEvent(gameDetails.get("gameId").toString(), gameDetails.get("color").toString()));
-//                                        listenToGameEvents(gameDetails.get("gameId").toString(), gameDetails.get("color").toString());
+                                            gameDetails = (JSONObject) json.get("challenge");
+                                            System.out.println(gameDetails.get("id"));
+                                            if (listOfGames.size() <2) {
+                                                acceptChallenge(gameDetails.get("id").toString());
+                                            }
                                             break;
                                     }
                                 }
@@ -75,6 +77,26 @@ public class LichessUtil {
                         System.out.println("Random Exception: ");
                     }
                 }).join();
+    }
+
+    void acceptChallenge(String gameId) {
+        HttpClient client = HttpClient.newHttpClient();
+        String apiUrl = lichessURL + String.format("/api/challenge/%s/accept", gameId);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .header("Accept", "application/x-ndjson")
+                .header("Authorization", authToken)
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 
 }
