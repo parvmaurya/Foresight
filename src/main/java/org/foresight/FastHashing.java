@@ -22,14 +22,22 @@ class FastHashing {
 
     void addScore(long zorbist, int score, int depth, Move bestMove) {
         int hashIndex = (int)(zorbist & mask);
-        if (ttKeys[hashIndex] != zorbist || ttDepth[hashIndex] < depth){
-            ttKeys[hashIndex] = zorbist;
-            ttDepth[hashIndex] = depth;
-            ttScore[hashIndex] = score;
-            if (bestMove != null) {
+        // if this position already exists in the hash
+        if (ttKeys[hashIndex] == zorbist) {
+            // if the depth of the new score is more than the existing score
+            if (ttDepth[hashIndex] < depth) {
+                ttKeys[hashIndex] = zorbist;
+                ttDepth[hashIndex] = depth;
+                ttScore[hashIndex] = score;
                 ttBestMove[hashIndex] = bestMove;
+                totalAdds++;
             }
-            totalAdds++;
+        } else {
+                ttKeys[hashIndex] = zorbist;
+                ttDepth[hashIndex] = depth;
+                ttScore[hashIndex] = score;
+                ttBestMove[hashIndex] = bestMove;
+                totalAdds++;
         }
     }
 
@@ -66,3 +74,4 @@ class FastHashing {
     }
 
 }
+
